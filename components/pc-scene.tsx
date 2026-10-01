@@ -49,9 +49,9 @@ export function PCScene() {
         >
           <span className="monitor-screen">
             <span className="terminal-label">ETHAN / WORKSPACE</span>
-            <span className="terminal-line">&gt; curiosity.init()</span>
+            <span className="terminal-line">ENGINEERING / CS50x</span>
             <span className="terminal-line purple">
-              building what’s next<span className="cursor">_</span>
+              Teams. Products. Initiative.
             </span>
             <span className="terminal-bars">
               <i />

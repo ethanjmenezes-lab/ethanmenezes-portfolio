@@ -1,72 +1,102 @@
 # Ethan Menezes — personal portfolio
 
-A Next.js 16 / React 19 portfolio inspired by an NV7 showcase PC, with purple and blue lighting, interactive hardware navigation, and responsive portfolio sections. The PC and project artwork use CSS: no WebGL, external images, or graphics engine downloads. Geist fonts are bundled through the official `geist` package, so builds do not fetch Google Fonts.
+A Next.js 16 / React 19 portfolio inspired by Ethan’s PC setup. Featured projects lead to statically generated case studies, followed by CS50 foundations, a learning-interest panel, concise leadership experience, hardware specifications, and contact information.
 
-## Run locally
+The PC is CSS, not WebGL. Geist fonts are bundled locally. No database, external API, API keys, or environment variables are required.
 
-Use Node.js 24 LTS and npm (the project was verified with Node 24).
+## Local development
+
+Use Node.js 24 and npm:
 
 ```bash
 npm ci
 npm run dev
 ```
 
-Open http://localhost:3000. To verify the production build:
+Open http://localhost:3000. For a production preview:
 
 ```bash
 npm run lint
+npm run format:check
 npm run build
 npm start
 ```
 
-No API keys or environment variables are required.
+With the production server running in another terminal, `npm run test:smoke` checks the homepage, case studies, metadata, internal anchor targets, résumé, image asset, and unknown-project 404. An optional URL argument selects another local port: `npm run test:smoke -- http://localhost:3001`.
 
-## Customize
+## Editing content
 
-Start in **`data/portfolio.ts`**. It contains the name, introduction, biography, interests, project entries, skill categories, experience, contact URLs, and résumé configuration.
+**`data/portfolio.ts` is the content source.** It contains the introduction, biography, contact links, projects, CS50 entries, skills, exploration groups, experience, honors, and hardware specifications.
 
-- **Projects:** replace all three sample projects. Set `placeholder: false` after replacing sample copy, stacks, and intended impact with your actual work and results. Optional `github` and `demo` fields accept full HTTPS URLs. The `visual` field selects `neural`, `orbit`, or `wave` artwork.
-- **Skills:** replace the example entries with verified skills, then set `skillsAreExamples: false`.
-- **Experience:** replace or remove sample entries; set `placeholder: false` and use an actual date or period in `label`.
-- **Contact:** set `contact.email` to a plain email address and `contact.github` / `contact.linkedin` to full profile URLs. Empty values appear as unavailable text, not dead links.
-- **Résumé:** add your actual PDF as **`public/resume.pdf`** and set `resume.url` to `"/resume.pdf"`. Until then, the download button is disabled. Update the qualifications summary alongside your résumé.
-- **Appearance:** edit **`app/globals.css`** for colors, spacing, PC geometry, animation, and breakpoints.
-- **Layout:** edit `app/page.tsx` for section composition, `components/pc-scene.tsx` for hardware, and `components/portfolio-sections.tsx` for cards and reusable sections.
-- **Branding:** `app/layout.tsx` contains metadata; `app/icon.svg` is the favicon; `app/opengraph-image.tsx` generates the share image locally at build time.
-- **Domain:** optionally set `siteUrl` to your full custom-domain URL. Otherwise, metadata uses Vercel's automatic deployment hostname (and localhost during local development).
+### Featured projects and case studies
 
-Keep `AGENTS.md`: it contains guidance for this installed Next.js version.
+Each `Project` includes a stable `slug`, problem, personal contributions, technical/product details, takeaways, metrics with a source note, and optional media and external links. Adding an entry generates `/projects/<slug>` at build time through the shared template in `app/projects/[slug]/page.tsx`.
 
-## Project structure
+Current routes:
+
+- `/projects/team-velo`
+- `/projects/satprep1600`
+
+Keep individual work separate from team results. Do not update reported metrics to look like live analytics. SATPrep1600’s metrics are a résumé snapshot supplied in October 2026. Team Velo’s placement and prize are team results.
+
+- `visual: "review-flow"` uses the labeled conceptual workflow diagram.
+- Optional `media` accepts a local asset path, accurate alt text, caption, and intrinsic dimensions. SATPrep1600 uses a screenshot of its public homepage captured in October 2026, stored in `public/projects/satprep1600.jpg`.
+- `stackLabel` distinguishes known technologies from a product-focus list where the implementation stack has not been supplied.
+- Optional `github`, `demo`, and `channel` fields accept full URLs. Missing links are omitted entirely.
+- Update `takeaways` with personal reflections when available; the current text describes supported engineering/product principles.
+
+No project repository URLs or LinkedIn profile were supplied. Add them when available. The GitHub profile was verified against the repository’s owner. The SATPrep1600 product and channel links were checked against its public homepage.
+
+### Résumé and contact
+
+`public/resume.pdf` is an unchanged copy of the supplied Fidelity Software Engineering résumé. Replace it with your updated public résumé while keeping the same filename, or update `resume.url` accordingly. The PDF itself includes its original contact details; page content uses the supplied Gmail address and does not repeat the phone number.
+
+Set `contact.linkedin` to a verified full URL to show it on the homepage. Do not use `#` or placeholder destinations. The GitHub and email values can be edited in the same object.
+
+### Learning, experience, and hardware
+
+- `exploration` describes learning interests, not research accomplishments or completed experiments. Update it manually as your direction develops.
+- Keep `skills` grounded in coursework/projects and separate from `Currently Learning`.
+- Use `experience` and `honors` for short evidence of initiative; the PDF holds the full résumé.
+- Edit `hardware` to keep the setup specifications current. Scene geometry and hardware labels live in `components/pc-scene.tsx`.
+
+## Structure and design
 
 ```text
 app/
-  globals.css             Theme, responsive layouts, CSS hardware and artwork
-  icon.svg                Custom EM favicon
-  layout.tsx              Local fonts and metadata
-  opengraph-image.tsx      Generated social-preview image
-  page.tsx                Server-rendered portfolio sections
+  globals.css                 Theme, responsive layouts, PC and project visuals
+  layout.tsx                  Local fonts and site metadata
+  page.tsx                    Homepage
+  projects/[slug]/page.tsx    Shared static case-study template and metadata
+  not-found.tsx               Unknown-page fallback
+  icon.svg                    EM favicon
+  opengraph-image.tsx          Build-time social image
 components/
-  navigation.tsx          Desktop navigation and native mobile menu
-  pc-scene.tsx            Interactive PC and hardware links
-  portfolio-sections.tsx  Reusable sections, project cards, skills, experience
-data/portfolio.ts         Editable portfolio content
-public/                   Add resume.pdf here
+  navigation.tsx              Cross-page navigation and native mobile menu
+  pc-scene.tsx                Interactive PC
+  project-visual.tsx          Screenshot and conceptual workflow rendering
+  portfolio-sections.tsx      Shared cards, sections, metrics, and footer
+data/portfolio.ts             Editable content and project types
+public/
+  resume.pdf                  Downloadable résumé
+  projects/satprep1600.jpg     Real public-product screenshot
+scripts/check-production.mjs  HTTP production smoke checks
 ```
 
-## Deploy on Vercel
+`app/globals.css` controls colors, typography, spacing, and breakpoints. Keep `AGENTS.md`; it contains guidance for the installed Next.js version. Run `npm run format` after editing.
 
-1. Replace the placeholder content before sharing the site with recruiters.
-2. Commit the project, including `package-lock.json`, and push it to your Git provider.
-3. In Vercel, create a project and import that repository.
-4. Use the **Next.js** framework preset and the repository root as the root directory. Keep the default install/build/output settings; the build command is `npm run build`.
-5. Select Node.js 24.x in project settings if needed. No environment variables are necessary.
-6. Deploy, then check the generated URL, social preview, contact links, and résumé download. Add a custom domain in the project settings when ready.
+## Deploy to Vercel
 
-Vercel supports Next.js without custom hosting configuration. See [Next.js on Vercel](https://vercel.com/docs/frameworks/full-stack/nextjs). This repository is prepared for deployment; it has not been published automatically.
+1. Commit the project and `package-lock.json`, then push to your Git provider.
+2. Create a Vercel project and import the repository.
+3. Select the **Next.js** framework preset, repository root, and Node.js 24.x. Keep the default install/output settings and `npm run build` as the build command.
+4. No environment variables are required. Deploy and test both case-study URLs, the résumé download, and the social preview.
+5. Add a custom domain if desired. Set `siteUrl` in the data file to that full URL; otherwise metadata uses Vercel’s automatic deployment hostname.
 
-## Accessibility and behavior
+See [Next.js on Vercel](https://vercel.com/docs/frameworks/full-stack/nextjs). Updating this project does not automatically publish it.
 
-Hardware links use normal section anchors and remain functional without JavaScript. Conventional navigation and a visible hardware legend provide alternatives to the scene. The native mobile menu also works without JavaScript. Decorative artwork is hidden from assistive technology. Pointer tilt runs only for mouse input with hover support; reduced-motion preferences disable tilt, fan rotation, smooth scrolling, and transitions. Missing links remain non-interactive.
+## Accessibility and verification
 
-Before publishing changes, run lint/build, check a desktop and mobile viewport, tab through navigation, and test each configured external link and résumé download.
+The homepage and case studies render as HTML. Standard navigation, hardware anchors, the native mobile menu, and résumé download work without JavaScript. Only pointer tilt needs client JavaScript. Reduced-motion preferences disable tilt, fan animation, smooth scrolling, and transitions. Unknown project slugs return 404.
+
+Before publishing, run lint, formatting, build, and smoke checks. Inspect desktop, tablet, and 320–390px widths; use the keyboard to open the mobile menu and follow case-study links; verify focus outlines, cross-page navigation, image alt text, and all configured external destinations.

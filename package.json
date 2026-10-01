@@ -7,8 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "format": "prettier --write app components data README.md",
-    "format:check": "prettier --check app components data README.md"
+    "format": "prettier --write app components data scripts README.md",
+    "format:check": "prettier --check app components data scripts README.md",
+    "test:smoke": "node scripts/check-production.mjs"
   },
   "dependencies": {
     "geist": "^1.7.2",
